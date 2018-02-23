@@ -18,14 +18,16 @@ body {
     margin-bottom: 10px;
   }
   
+ 
   ul li .edit {
-    display: none;
+    display: none;   /*标签ul 标签li 下具有 edit class的元素都不显示*/
   }
   
+  /*通过向li标签加入edit class能控制其下级标签的显示与否*/
   ul li.edit .edit {
-    display: initial;
+    display: initial; /*标签ul 具有edit class的li标签 下具有 edit class的元素都显示*/
   }
   
   ul li.edit .noedit {
-    display: none;
+    display: none; /*标签ul 具有edit class的li标签 下具有 noedit class的元素都不显示*/
   }

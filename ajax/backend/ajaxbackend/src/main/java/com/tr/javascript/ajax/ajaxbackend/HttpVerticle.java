@@ -25,7 +25,9 @@ public class HttpVerticle extends AbstractVerticle {
 		restApiRouter.route().handler(BodyHandler.create());
 		restApiRouter.get("/api/orders").handler(this::getOrders);
 		restApiRouter.post("/api/orders").handler(this::postOrders);
-		restApiRouter.delete("/api/orders").handler(this::deleteOrders);
+		restApiRouter.delete("/api/orders/:OrderID").handler(this::deleteOrder);
+		restApiRouter.options("/api/orders/:OrderID").handler(this::options);
+		restApiRouter.put("/api/orders/:OrderID").handler(this::putOrder);
 		vertx.createHttpServer().requestHandler(restApiRouter::accept).listen(8080,handler -> System.out.println("Server listening on port 8080"));
 
 	}
@@ -60,7 +62,6 @@ public class HttpVerticle extends AbstractVerticle {
 	{
 		Integer thisIndex=index.getAndIncrement();
 		
-		String body=rc.getBodyAsString();
 		JsonObject newOrder=rc.getBodyAsJson();
 		newOrder.put("id", thisIndex);
 		
@@ -74,8 +75,54 @@ public class HttpVerticle extends AbstractVerticle {
 		
 	}
 	
-	private void deleteOrders(RoutingContext rc)
+	
+	private void options(RoutingContext rc)
 	{
+		rc.response()
+        .putHeader(HttpHeaders.CONTENT_TYPE, "text/html")
+        .putHeader("Access-Control-Allow-Origin", "*")
+        .putHeader("Access-Control-Allow-Headers", "appkey,X_forwarded-for,Content-Type")
+        .putHeader("Access-Control-Allow-Methods", "OPTIONS,GET,POST,PUT,DELETE")
+        .end();
+		
+	}
+	
+	private void deleteOrder(RoutingContext rc)
+	{
+		Integer OrderID = Integer.parseInt( rc.request().getParam("OrderID"));
+		JsonObject removedOrder=orderlist.remove(OrderID);
+		
+		if (removedOrder != null)
+		{
+			rc.response()
+	        .putHeader(HttpHeaders.CONTENT_TYPE, "application/json")
+	        .putHeader("Access-Control-Allow-Origin", "*")
+	        .end(removedOrder.encode());
+		}
+		else
+		{
+			rc.response()
+	        .putHeader(HttpHeaders.CONTENT_TYPE, "application/json")
+	        .putHeader("Access-Control-Allow-Origin", "*")
+	        .end();
+		}
+		
+	}
+	
+	private void putOrder(RoutingContext rc)
+	{
+		Integer OrderID = Integer.parseInt( rc.request().getParam("OrderID"));
+		
+		JsonObject updatedOrder=rc.getBodyAsJson();
+		updatedOrder.put("id", OrderID);
+		
+		orderlist.put(OrderID, updatedOrder);
+		System.out.println(updatedOrder.encode());
+		
+		rc.response()
+        .putHeader(HttpHeaders.CONTENT_TYPE, "application/json")
+        .putHeader("Access-Control-Allow-Origin", "*")
+        .end(updatedOrder.encode());
 		
 	}
 
