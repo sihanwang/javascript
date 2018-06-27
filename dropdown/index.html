@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Page Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="jquery/jquery-3.3.1.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/main.css" />
+    
+</head>
+<body>
+    <div id="container">
+        Computer Languages: <br>
+        <datalist id="language"></datalist>
+        <input type="text" list="language" name="language"/>
+        <br><br>
+
+        Degree: <br>
+        <datalist id="degree"></datalist>
+        <input type="text" list="degree" name="degree"/>
+        <br><br>
+
+    </div>
+
+    <script type="text/javascript" src="js/script.js"></script>
+    <script>
+        $(function () {
+            $("input").on("mouseover", function(){
+                var a=$(this).attr("name");
+                populate(a);
+            });
+        })
+    </script>
+
+</body>
+</html>
